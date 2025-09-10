@@ -281,3 +281,76 @@ document.getElementById("busca").addEventListener("input", function() {
   
     renderTabela(filtrados);
   });
+
+  let grafico; // variável global para atualizar o gráfico
+
+  
+  function atualizarGrafico(lista) {
+    let infeccoes = 0;
+    let neoplasias = 0;
+  
+    lista.forEach(p => {
+      if (p.patologia.toLowerCase().includes("neoplasia")) {
+        neoplasias++;
+      } else {
+        infeccoes++;
+      }
+    });
+  
+    const ctx = document.getElementById("graficoPizza");
+  
+    // Se já existe, destruímos antes de criar
+    if (grafico) grafico.destroy();
+  
+    grafico = new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: ["Infecções", "Neoplasias"],
+        datasets: [{
+          data: [infeccoes, neoplasias],
+          backgroundColor: ["#0d6efd", "#dc3545"]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let total = infeccoes + neoplasias;
+                let valor = context.raw;
+                let perc = ((valor / total) * 100).toFixed(1) + "%";
+                return `${context.label}: ${valor} (${perc})`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // Inicializa tabela e gráfico completos
+  renderTabela(pacientes);
+  atualizarGrafico(pacientes);
+  
+  // Filtro de busca
+  document.getElementById("busca").addEventListener("input", function() {
+    const filtro = document.getElementById("filtro").value;
+    const valor = this.value.toLowerCase();
+  
+    const filtrados = pacientes.filter(p => {
+      if (filtro === "id") return p.id.toString().startsWith(valor);
+      if (filtro === "nome") return p.nome.toLowerCase().startsWith(valor);
+      if (filtro === "patologia") {
+        return (
+          p.patologia.toLowerCase().startsWith(valor) ||
+          p.neoplasia.toLowerCase().startsWith(valor)
+        );
+      }
+    });
+  
+    renderTabela(filtrados);
+    atualizarGrafico(filtrados); // gráfico atualizado conforme filtro
+  });
+  
