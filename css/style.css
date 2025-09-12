@@ -2,9 +2,26 @@ body{
     background-image: url("../image/fundoMolecular.jpg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed; /* Impede que o fundo se mova com o scroll */
 }
 
 .titulo{
     font-size: 3rem;
     text-shadow: #000 2px 3px 2px;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ADICIONE ESTA NOVA REGRA ABAIXO */
+.chart-container {
+    position: relative;
+    height: 350px; /* Altura fixa para os gráficos. Você pode ajustar este valor! */
+    width: 100%;
 }
